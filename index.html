@@ -352,7 +352,7 @@ const LS_KEY = 'appaday-144-apikey';
 const LS_SESSION = 'appaday-144-session';
 const LS_HISTORY = 'appaday-144-history';
 const HISTORY_CAP = 12;
-const MAX_PDF_BYTES = 20 * 1024 * 1024;
+const MAX_PDF_BYTES = 22 * 1024 * 1024;
 const MAX_TOKENS = 4000;
 
 const SYSTEM_PROMPT = [
@@ -957,7 +957,7 @@ function onPdfChosen(){
   if (!isPdf) { clearPdf(); setMsg('inputMsg', 'Please choose a PDF file.', 'err'); return; }
   if (f.size > MAX_PDF_BYTES) {
     clearPdf();
-    setMsg('inputMsg', 'That PDF is ' + (f.size / 1048576).toFixed(1) + ' MB. Please use one under 20 MB, or paste the text instead.', 'err');
+    setMsg('inputMsg', 'That PDF is ' + (f.size / 1048576).toFixed(1) + ' MB. Please use one under 22 MB, or paste the text instead.', 'err');
     return;
   }
   const reader = new FileReader();
