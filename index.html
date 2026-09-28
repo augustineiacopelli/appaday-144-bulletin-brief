@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>144 Bulletin Brief | AppADay</title>
+<meta name="description" content="Turn a Catholic parish bulletin into a one page digest of Mass times, schedule changes, events, and asks.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f5f0e6;
+  --card:#fffdf8;
+  --ink:#1c2230;
+  --navy:#1f2f4d;
+  --navy-2:#2c4270;
+  --gold:#b8892b;
+  --gold-soft:#f3e6c6;
+  --amber:#b86e00;
+  --amber-bg:#fff3dc;
+  --muted:#7a7f89;
+  --line:#e2d8c4;
+  --danger:#a3332b;
+  --radius:14px;
+  --serif:'Cormorant Garamond', Georgia, serif;
+  --sans:'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  min-height:100dvh;
+  display:flex;
+  flex-direction:column;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:var(--sans);
+  font-size:15px;
+  line-height:1.5;
+  -webkit-text-size-adjust:100%;
+}
+a{color:var(--navy-2)}
+button,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* Header */
+.app-header{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:10px 16px;
+  background:var(--navy);color:#fff;
+  border-bottom:3px solid var(--gold);
+}
+.brand{display:flex;flex-direction:column;min-width:0}
+.brand .back{color:var(--gold-soft);font-size:12px;letter-spacing:.08em;text-transform:uppercase;text-decoration:none}
+.brand .back:hover{text-decoration:underline}
+.brand h1{margin:0;font-family:var(--serif);font-weight:700;font-size:26px;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.brand h1 .num{color:var(--gold)}
+.session-chip{font-size:12px;color:#c9d2e6;margin-top:2px}
+.head-actions{display:flex;gap:6px;flex-shrink:0}
+.icon-btn{
+  width:44px;height:44px;border-radius:12px;border:1px solid rgba(255,255,255,.2);
+  background:rgba(255,255,255,.06);color:#fff;display:inline-flex;align-items:center;justify-content:center;
+}
+.icon-btn:hover{background:rgba(255,255,255,.14)}
+.icon-btn svg{width:22px;height:22px}
+
+/* Layout */
+main.app{
+  flex:1;
+  display:grid;
+  grid-template-columns:1fr;
+  gap:16px;
+  padding:16px;
+  width:100%;
+}
+@media (min-width:900px){
+  main.app{grid-template-columns:minmax(320px,400px) 1fr;align-items:start;padding:24px}
+  .input-panel{position:sticky;top:16px}
+}
+.panel{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  box-shadow:0 1px 2px rgba(31,47,77,.06),0 8px 24px rgba(31,47,77,.05);
+  padding:18px;
+  min-width:0;
+}
+.panel h2{font-family:var(--serif);font-size:22px;margin:0 0 4px;color:var(--navy)}
+.panel .sub{margin:0 0 14px;color:var(--muted);font-size:13px}
+
+/* Input */
+label.field{display:block;font-size:13px;font-weight:600;color:var(--navy);margin:14px 0 6px}
+textarea{
+  width:100%;min-height:160px;resize:vertical;
+  border:1px solid var(--line);border-radius:10px;padding:12px;background:#fff;
+  font-size:14px;line-height:1.45;
+}
+textarea:focus,input:focus{outline:2px solid var(--gold);outline-offset:1px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.file-btn{
+  display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 16px;
+  border:1px dashed var(--navy-2);border-radius:10px;background:#f8f5ee;color:var(--navy);font-weight:600;font-size:14px;
+}
+.file-btn:hover{background:var(--gold-soft)}
+.file-chip{
+  display:none;align-items:center;gap:8px;min-height:44px;padding:0 6px 0 12px;border-radius:10px;
+  background:var(--gold-soft);color:var(--navy);font-size:13px;max-width:100%;
+}
+.file-chip.show{display:inline-flex}
+.file-chip .name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:200px}
+.chip-clear{min-width:44px;min-height:36px;border:0;background:transparent;color:var(--danger);font-weight:600;font-size:13px}
+input[type=date],input[type=text],input[type=password]{
+  min-height:44px;border:1px solid var(--line);border-radius:10px;padding:0 12px;background:#fff;font-size:15px;width:100%;
+}
+.date-wrap{max-width:220px}
+.primary{
+  width:100%;min-height:50px;margin-top:18px;border:0;border-radius:12px;
+  background:var(--navy);color:#fff;font-weight:600;font-size:16px;letter-spacing:.01em;
+  display:inline-flex;align-items:center;justify-content:center;gap:10px;
+}
+.primary:hover{background:var(--navy-2)}
+.primary:disabled{opacity:.7;cursor:progress}
+.spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite;display:none}
+.primary.loading .spinner{display:inline-block}
+@keyframes spin{to{transform:rotate(360deg)}}
+.msg{margin-top:10px;font-size:13px;min-height:0}
+.msg.err{color:var(--danger)}
+.msg.info{color:var(--muted)}
+
+/* Digest */
+.digest-panel{min-height:280px}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px}
+.ghost{
+  min-height:44px;padding:0 16px;border-radius:10px;border:1px solid var(--line);background:#fff;color:var(--navy);font-weight:600;font-size:14px;
+  display:inline-flex;align-items:center;gap:8px;
+}
+.ghost:hover{border-color:var(--gold);background:#fffaf0}
+.digest-head{border-bottom:2px solid var(--gold);padding-bottom:10px;margin-bottom:14px}
+.digest-head .parish{font-family:var(--serif);font-size:28px;font-weight:700;color:var(--navy);line-height:1.1;margin:0}
+.digest-head .week{color:var(--muted);font-size:14px;margin-top:4px}
+.empty-state{text-align:center;color:var(--muted);padding:48px 12px}
+.empty-state .cross{font-family:var(--serif);font-size:48px;color:var(--gold);line-height:1}
+.empty-state p{max-width:340px;margin:10px auto 0}
+
+.digest-body section{margin:0 0 20px}
+.digest-body h3{
+  font-family:var(--serif);font-size:20px;color:var(--navy);margin:0 0 8px;
+  display:flex;align-items:center;gap:8px;
+}
+.digest-body h3::before{content:"";width:6px;height:18px;background:var(--gold);border-radius:3px}
+.digest-body h4{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:10px 0 6px}
+.changes{
+  background:var(--amber-bg);border:1px solid #efcf93;border-left:5px solid var(--amber);
+  border-radius:10px;padding:10px 14px;margin:0 0 12px;
+}
+.changes strong.band{display:block;color:var(--amber);font-size:13px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px}
+.changes ul{margin:0;padding-left:18px}
+.changes li{margin:2px 0}
+table.sched{width:100%;border-collapse:collapse;font-size:14px}
+table.sched th,table.sched td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+table.sched thead th{font-size:12px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.06em}
+table.sched tr.group th{background:#f4efe3;color:var(--navy);font-family:var(--serif);font-size:16px;font-weight:700}
+table.sched td.t{white-space:nowrap;font-weight:600}
+.note{display:block;color:var(--muted);font-size:13px}
+.na{color:var(--muted);font-style:italic;font-size:13px}
+.flag{
+  display:inline-block;margin-right:6px;margin-top:3px;padding:1px 8px;border-radius:999px;
+  background:var(--amber-bg);color:var(--amber);border:1px solid #efcf93;font-size:12px;font-weight:600;
+}
+ul.items{list-style:none;margin:0;padding:0}
+ul.items > li{padding:9px 0;border-bottom:1px solid var(--line)}
+ul.items > li:last-child{border-bottom:0}
+.item-title{font-weight:600}
+.item-meta{font-size:13px;color:#454b57}
+.item-meta span + span::before{content:" | ";color:var(--line)}
+.cal-btn{
+  display:block;margin-top:6px;min-height:44px;padding:0 14px;border-radius:9px;border:1px solid var(--navy-2);background:#fff;color:var(--navy);font-size:13px;font-weight:600;
+}
+.cal-btn:hover{background:var(--gold-soft)}
+.entry-line{font-size:14px}
+.entry-line b{color:var(--navy)}
+
+/* Modal + drawer */
+.overlay{position:fixed;inset:0;background:rgba(18,24,38,.45);display:none;z-index:40}
+.overlay.show{display:block}
+.modal{
+  position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:50;
+  width:calc(100vw - 32px);max-width:440px;background:var(--card);border-radius:16px;padding:20px;
+  box-shadow:0 20px 60px rgba(0,0,0,.25);display:none;
+}
+.modal.show{display:block}
+.modal h2{font-family:var(--serif);margin:0 0 6px;color:var(--navy)}
+.modal .hint{font-size:12px;color:var(--muted);margin:6px 0 0}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:18px}
+.modal-actions .primary{width:auto;margin:0;padding:0 22px;min-height:44px}
+.drawer{
+  position:fixed;top:0;right:0;bottom:0;z-index:50;width:min(360px,100vw);
+  background:var(--card);box-shadow:-10px 0 40px rgba(0,0,0,.2);
+  transform:translateX(105%);transition:transform .22s ease;display:flex;flex-direction:column;
+}
+.drawer.show{transform:translateX(0)}
+.drawer-head{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--line)}
+.drawer-head h2{font-family:var(--serif);margin:0;color:var(--navy);font-size:22px}
+.close-btn{width:44px;height:44px;border-radius:10px;border:1px solid var(--line);background:#fff;font-size:20px;color:var(--navy)}
+.drawer-list{flex:1;overflow-y:auto;padding:8px 12px;margin:0;list-style:none}
+.drawer-list li{display:flex;gap:8px;align-items:stretch;padding:6px 0;border-bottom:1px solid var(--line)}
+.hist-open{flex:1;text-align:left;min-height:52px;border:0;background:transparent;padding:6px 8px;border-radius:10px}
+.hist-open:hover{background:#f6f1e5}
+.hist-open .p{display:block;font-weight:600;color:var(--navy)}
+.hist-open .d{display:block;font-size:12px;color:var(--muted)}
+.hist-del{min-width:72px;min-height:44px;align-self:center;border:1px solid var(--line);background:#fff;border-radius:10px;color:var(--danger);font-size:13px;font-weight:600}
+.hist-del.armed{background:var(--danger);color:#fff;border-color:var(--danger)}
+.drawer-empty{padding:24px 16px;color:var(--muted);font-size:14px}
+
+.toast{
+  position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);z-index:60;
+  background:var(--navy);color:#fff;padding:10px 18px;border-radius:999px;font-size:14px;opacity:0;pointer-events:none;
+  transition:opacity .2s, transform .2s;max-width:calc(100vw - 32px);
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+footer.app-footer{
+  text-align:center;padding:16px;font-size:13px;color:var(--muted);border-top:1px solid var(--line);
+}
+footer.app-footer a{color:var(--navy);font-weight:600}
+
+@media (max-width:420px){
+  .brand h1{font-size:22px}
+  .digest-head .parish{font-size:24px}
+  table.sched{font-size:13px}
+  table.sched th,table.sched td{padding:6px 5px}
+}
+
+@media print{
+  @page{size:letter;margin:0.4in}
+  *{color:#000 !important;background:#fff !important;box-shadow:none !important}
+  html,body{background:#fff !important;min-height:0}
+  .app-header,.app-footer,.input-panel,button,.toolbar,.overlay,.modal,.drawer,.toast{display:none !important}
+  main.app{display:block;padding:0}
+  .panel{border:0;padding:0}
+  .digest-head{border-bottom:1.5pt solid #000;margin-bottom:6pt;padding-bottom:4pt}
+  .digest-head .parish{font-size:16pt}
+  .digest-head .week{font-size:9pt}
+  .digest-body{columns:2;column-gap:0.3in;font-size:9.5pt;line-height:1.3}
+  .digest-body section{break-inside:avoid;page-break-inside:avoid;margin:0 0 8pt}
+  .digest-body h3{font-size:12pt;margin:0 0 3pt}
+  .digest-body h3::before{background:#000 !important;height:10pt;width:3pt}
+  .digest-body h4{font-size:8pt;margin:4pt 0 2pt}
+  table.sched{font-size:9pt}
+  table.sched th,table.sched td{padding:2pt 3pt;border-bottom:0.5pt solid #999}
+  table.sched tr.group th{font-size:10pt}
+  .changes{border:1pt solid #000;border-left:3pt solid #000;padding:4pt 6pt;margin-bottom:6pt}
+  .flag{border:0.75pt solid #000;padding:0 4pt;font-size:8pt}
+  .note,.na,.item-meta{font-size:8.5pt}
+  ul.items > li{padding:3pt 0;break-inside:avoid}
+}
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="brand">
+    <a class="back" href="https://augustineiacopelli.github.io/appaday/">&larr; AppADay Portfolio</a>
+    <h1><span class="num">144</span> Bulletin Brief</h1>
+    <span class="session-chip" id="sessionChip"></span>
+  </div>
+  <div class="head-actions">
+    <button class="icon-btn" id="historyBtn" type="button" aria-label="History">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/><path d="M12 7v5l3 2"/></svg>
+    </button>
+    <button class="icon-btn" id="settingsBtn" type="button" aria-label="Settings">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+    </button>
+  </div>
+</header>
+
+<main class="app">
+  <section class="panel input-panel" aria-labelledby="inTitle">
+    <h2 id="inTitle">This week's bulletin</h2>
+    <p class="sub">Paste the text, attach the PDF, or both. You get a one page digest of what matters.</p>
+
+    <label class="field" for="pasteText">Bulletin text</label>
+    <textarea id="pasteText" placeholder="Paste bulletin text here..."></textarea>
+
+    <label class="field">Bulletin PDF</label>
+    <div class="row">
+      <label class="file-btn" for="pdfInput">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+        Choose PDF
+      </label>
+      <input class="sr" type="file" id="pdfInput" accept="application/pdf">
+      <span class="file-chip" id="fileChip"><span class="name" id="fileName"></span><button class="chip-clear" id="fileClear" type="button">Clear</button></span>
+    </div>
+
+    <label class="field" for="weekOf">Week of (Sunday)</label>
+    <div class="date-wrap"><input type="date" id="weekOf"></div>
+
+    <button class="primary" id="generateBtn" type="button"><span class="spinner"></span><span id="genLabel">Generate brief</span></button>
+    <div class="msg" id="inputMsg" role="status" aria-live="polite"></div>
+  </section>
+
+  <section class="panel digest-panel" aria-labelledby="digestTitle">
+    <h2 id="digestTitle" class="sr">Digest</h2>
+    <div class="toolbar" id="toolbar" hidden>
+      <button class="ghost" id="shareBtn" type="button">Share</button>
+      <button class="ghost" id="printBtn" type="button">Print</button>
+    </div>
+    <div id="digest">
+      <div class="empty-state">
+        <div class="cross">&#10013;</div>
+        <p>Your brief will appear here: Mass times, schedule changes, confession, events, and what the parish is asking of you.</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="app-footer">
+  AppADay #144 &middot; Bulletin Brief &middot; <a href="https://augustineiacopelli.github.io/appaday/">Back to the portfolio</a>
+</footer>
+
+<div class="overlay" id="overlay"></div>
+
+<div class="modal" id="settingsModal" role="dialog" aria-modal="true" aria-labelledby="setTitle">
+  <h2 id="setTitle">Settings</h2>
+  <label class="field" for="apiKey">Anthropic API key</label>
+  <input type="password" id="apiKey" autocomplete="off" spellcheck="false" placeholder="sk-ant-...">
+  <p class="hint">Stored only in this browser's localStorage and sent only to api.anthropic.com.</p>
+  <label class="field" for="sessionName">Session name</label>
+  <input type="text" id="sessionName" maxlength="60" placeholder="e.g. St. Francis bulletin">
+  <div class="msg" id="settingsMsg"></div>
+  <div class="modal-actions">
+    <button class="ghost" id="settingsCancel" type="button">Cancel</button>
+    <button class="primary" id="settingsSave" type="button">Save</button>
+  </div>
+</div>
+
+<aside class="drawer" id="drawer" aria-label="History">
+  <div class="drawer-head">
+    <h2>Past weeks</h2>
+    <button class="close-btn" id="drawerClose" type="button" aria-label="Close history">&times;</button>
+  </div>
+  <ul class="drawer-list" id="historyList"></ul>
+</aside>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+const CLAUDE_MODEL = 'claude-sonnet-5';
+const API_URL = 'https://api.anthropic.com/v1/messages';
+const LS_KEY = 'appaday-144-apikey';
+const LS_SESSION = 'appaday-144-session';
+const LS_HISTORY = 'appaday-144-history';
+const HISTORY_CAP = 12;
+const MAX_PDF_BYTES = 20 * 1024 * 1024;
+const MAX_TOKENS = 4000;
+
+const SYSTEM_PROMPT = [
+  'You are extracting structured information from a Catholic parish bulletin.',
+  'Return ONLY a single JSON object. No prose, no explanation, no markdown, no code fences.',
+  'Use null for any single value that is absent and an empty array for any list with no items. Never guess or invent anything the bulletin does not state.',
+  '',
+  'Schema:',
+  '{',
+  '  "parish": string or null,',
+  '  "weekOf": "YYYY-MM-DD" (the Sunday of the bulletin week) or null,',
+  '  "massTimes": {',
+  '    "weekend": [Entry],',
+  '    "weekday": [Entry],',
+  '    "special": [Entry],',
+  '    "changes": [Entry]',
+  '  },',
+  '  "confession": [Entry],',
+  '  "adoration": [Entry],',
+  '  "events": [Event],',
+  '  "asks": [Ask],',
+  '  "notes": [Note]',
+  '}',
+  'Entry = { "day": string or null, "time": string or null, "location": string or null, "note": string or null, "flag": string or null }',
+  'Event = { "title": string, "date": "YYYY-MM-DD" or null, "start": "HH:MM" 24 hour or null, "end": "HH:MM" 24 hour or null, "location": string or null, "flag": string or null }',
+  'Ask = { "what": string, "who": string or null, "deadline": "YYYY-MM-DD" or null, "contact": string or null, "flag": string or null }',
+  'Note = { "text": string, "flag": string or null }',
+  '',
+  'Rules:',
+  'weekend holds the regular Saturday vigil and Sunday Masses. weekday holds the regular Monday through Saturday morning Masses. special holds holy days, feasts, and one time liturgies this week. changes holds any cancellation, time change, location change, or substitution to the normal schedule this week, with the specifics in note.',
+  'Entry times are human readable, like "5:00 PM". Event start and end are 24 hour HH:MM.',
+  'events are dated happenings a parishioner could attend. asks are requests for volunteers, donations, sign ups, or RSVPs. notes are other important announcements, one short sentence each. Skip ads, boilerplate, staff directories, and prayer lists.',
+  'Resolve weekday references and missing years against the week of date given in the user message. If you had to infer a year, still fill the date and set flag to "Year inferred".',
+  'flag is null when an item is clear. When it is ambiguous, flag is a short reason under 12 words, such as "Year inferred", "Date given with no time", or "Conflicts with another mention".',
+  'Keep every string concise.'
+].join('\n');
+
+/* ---------- Utilities ---------- */
+function lsGet(k){ try { return localStorage.getItem(k); } catch (e) { return null; } }
+function lsSet(k, v){ try { localStorage.setItem(k, v); return true; } catch (e) { return false; } }
+function $(id){ return document.getElementById(id); }
+function clearNode(node){ while (node.firstChild) node.removeChild(node.firstChild); }
+function el(tag, cls, text){
+  const n = document.createElement(tag);
+  if (cls) n.className = cls;
+  if (text !== undefined && text !== null) n.textContent = text;
+  return n;
+}
+function pad2(n){ return String(n).padStart(2, '0'); }
+function ymdLocal(d){ return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate()); }
+function comingSunday(){
+  const d = new Date();
+  d.setDate(d.getDate() + ((7 - d.getDay()) % 7));
+  return ymdLocal(d);
+}
+let toastTimer = null;
+function toast(msg){
+  const t = $('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ t.classList.remove('show'); }, 2400);
+}
+function setMsg(id, text, kind){
+  const m = $(id);
+  m.textContent = text || '';
+  m.className = 'msg' + (kind ? ' ' + kind : '');
+}
+
+/* ---------- Validation helpers ---------- */
+const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+function validDate(str){
+  if (typeof str !== 'string' || !DATE_RE.test(str)) return false;
+  const p = str.split('-').map(Number);
+  const dt = new Date(Date.UTC(p[0], p[1] - 1, p[2]));
+  return dt.getUTCFullYear() === p[0] && dt.getUTCMonth() === p[1] - 1 && dt.getUTCDate() === p[2];
+}
+function normTime(v){
+  if (typeof v !== 'string') return null;
+  const m = v.trim().match(/^(\d{1,2}):(\d{2})$/);
+  if (!m) return null;
+  const h = Number(m[1]), mi = Number(m[2]);
+  if (h > 23 || mi > 59) return null;
+  return pad2(h) + ':' + pad2(mi);
+}
+function fmtTime(hhmm){
+  if (!hhmm) return null;
+  const p = hhmm.split(':').map(Number);
+  const suffix = p[0] >= 12 ? 'PM' : 'AM';
+  const h = p[0] % 12 === 0 ? 12 : p[0] % 12;
+  return h + ':' + pad2(p[1]) + ' ' + suffix;
+}
+function fmtDate(iso, long){
+  if (!validDate(iso)) return null;
+  const p = iso.split('-').map(Number);
+  const d = new Date(Date.UTC(p[0], p[1] - 1, p[2]));
+  const opts = long
+    ? { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' }
+    : { weekday: 'short', month: 'short', day: 'numeric', timeZone: 'UTC' };
+  return d.toLocaleDateString('en-US', opts);
+}
+
+/* ---------- Normalize ---------- */
+function str(v){
+  if (typeof v === 'number' && isFinite(v)) v = String(v);
+  return (typeof v === 'string' && v.trim()) ? v.trim() : null;
+}
+function arr(v){ return Array.isArray(v) ? v : []; }
+function addFlag(existing, reason){ return existing ? existing + '; ' + reason : reason; }
+
+function normEntry(o){
+  if (!o || typeof o !== 'object') return null;
+  const e = { day: str(o.day), time: str(o.time), location: str(o.location), note: str(o.note), flag: str(o.flag) };
+  if (!e.day && !e.time && !e.location && !e.note) return null;
+  return e;
+}
+function normEvent(o){
+  if (!o || typeof o !== 'object') return null;
+  const title = str(o.title);
+  if (!title) return null;
+  let flag = str(o.flag);
+  let date = str(o.date);
+  if (date && !validDate(date)) { flag = addFlag(flag, 'Date unclear (' + date + ')'); date = null; }
+  else if (!date && !flag) { flag = 'No date given'; }
+  const rawStart = str(o.start), rawEnd = str(o.end);
+  let start = normTime(rawStart), end = normTime(rawEnd);
+  if (rawStart && !start) flag = addFlag(flag, 'Start time unclear');
+  if (rawEnd && !end) flag = addFlag(flag, 'End time unclear');
+  return { title: title, date: date, start: start, end: end, location: str(o.location), flag: flag };
+}
+function normAsk(o){
+  if (!o || typeof o !== 'object') return null;
+  const what = str(o.what);
+  if (!what) return null;
+  return { what: what, who: str(o.who), deadline: str(o.deadline), contact: str(o.contact), flag: str(o.flag) };
+}
+function normNote(o){
+  if (typeof o === 'string') { const t = str(o); return t ? { text: t, flag: null } : null; }
+  if (!o || typeof o !== 'object') return null;
+  const text = str(o.text);
+  return text ? { text: text, flag: str(o.flag) } : null;
+}
+function mapClean(list, fn){ return arr(list).map(fn).filter(Boolean); }
+
+function normalize(raw, fallbackWeek){
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) throw new Error('Not an object');
+  const mt = (raw.massTimes && typeof raw.massTimes === 'object') ? raw.massTimes : {};
+  const weekOf = validDate(str(raw.weekOf)) ? str(raw.weekOf) : (validDate(fallbackWeek) ? fallbackWeek : null);
+  return {
+    parish: str(raw.parish),
+    weekOf: weekOf,
+    massTimes: {
+      weekend: mapClean(mt.weekend, normEntry),
+      weekday: mapClean(mt.weekday, normEntry),
+      special: mapClean(mt.special, normEntry),
+      changes: mapClean(mt.changes, normEntry)
+    },
+    confession: mapClean(raw.confession, normEntry),
+    adoration: mapClean(raw.adoration, normEntry),
+    events: mapClean(raw.events, normEvent),
+    asks: mapClean(raw.asks, normAsk),
+    notes: mapClean(raw.notes, normNote)
+  };
+}
+
+/* ---------- Render ---------- */
+function valOrNL(v){ return v ? document.createTextNode(v) : el('span', 'na', 'Not listed'); }
+function flagNode(reason){ return el('span', 'flag', '! ' + reason); }
+function entryText(e){
+  return [e.day, e.time, e.location].filter(Boolean).join(', ') + (e.note ? ' (' + e.note + ')' : '');
+}
+function sortEvents(list){
+  return list.slice().sort(function(a, b){
+    const ak = (a.date || '9999-99-99') + (a.start || '99:99');
+    const bk = (b.date || '9999-99-99') + (b.start || '99:99');
+    return ak < bk ? -1 : ak > bk ? 1 : 0;
+  });
+}
+function deadlineKey(d){
+  if (!d) return Infinity;
+  if (validDate(d)) { const p = d.split('-').map(Number); return Date.UTC(p[0], p[1] - 1, p[2]); }
+  const t = Date.parse(d);
+  return isNaN(t) ? Infinity : t;
+}
+function sortAsks(list){
+  return list.slice().sort(function(a, b){
+    const ak = deadlineKey(a.deadline), bk = deadlineKey(b.deadline);
+    if (ak === bk) return 0;
+    return ak < bk ? -1 : 1;
+  });
+}
+function isOpenPeriod(title){
+  return /^\s*open\b/i.test(title) || /\bopen\s+(period|hours?|time|block|slot)\b/i.test(title);
+}
+function canExport(ev){
+  return validDate(ev.date) && !!ev.start && ev.start >= '06:30' && !isOpenPeriod(ev.title);
+}
+
+function renderEntryList(entries){
+  const ul = el('ul', 'items');
+  entries.forEach(function(e){
+    const li = el('li');
+    const line = el('div', 'entry-line');
+    const b = el('b');
+    b.appendChild(valOrNL(e.day));
+    line.appendChild(b);
+    line.appendChild(document.createTextNode('  '));
+    line.appendChild(valOrNL(e.time));
+    li.appendChild(line);
+    const meta = el('div', 'item-meta');
+    meta.appendChild(valOrNL(e.location));
+    li.appendChild(meta);
+    if (e.note) li.appendChild(el('span', 'note', e.note));
+    if (e.flag) li.appendChild(flagNode(e.flag));
+    ul.appendChild(li);
+  });
+  return ul;
+}
+
+function renderDigest(data){
+  const root = $('digest');
+  clearNode(root);
+
+  const head = el('div', 'digest-head');
+  head.appendChild(el('p', 'parish', data.parish || 'Parish not listed'));
+  head.appendChild(el('div', 'week', data.weekOf ? 'Week of ' + fmtDate(data.weekOf, true) : 'Week not listed'));
+  root.appendChild(head);
+
+  const body = el('div', 'digest-body');
+  const mt = data.massTimes;
+
+  /* Schedule */
+  const groups = [['Weekend', mt.weekend], ['Weekday', mt.weekday], ['Special', mt.special]];
+  const hasSched = groups.some(function(g){ return g[1].length; });
+  if (mt.changes.length || hasSched) {
+    const sec = el('section');
+    sec.appendChild(el('h3', null, 'Mass Schedule'));
+    if (mt.changes.length) {
+      const band = el('div', 'changes');
+      band.appendChild(el('strong', 'band', "This week's changes"));
+      const ul = el('ul');
+      mt.changes.forEach(function(c){
+        const li = el('li', null, entryText(c) || 'Change noted');
+        if (c.flag) { li.appendChild(document.createTextNode(' ')); li.appendChild(flagNode(c.flag)); }
+        ul.appendChild(li);
+      });
+      band.appendChild(ul);
+      sec.appendChild(band);
+    }
+    if (hasSched) {
+      const table = el('table', 'sched');
+      const thead = el('thead');
+      const hr = el('tr');
+      ['Day', 'Time', 'Where'].forEach(function(h){ hr.appendChild(el('th', null, h)); });
+      thead.appendChild(hr);
+      table.appendChild(thead);
+      groups.forEach(function(g){
+        if (!g[1].length) return;
+        const tb = el('tbody');
+        const gr = el('tr', 'group');
+        const gth = el('th', null, g[0]);
+        gth.colSpan = 3;
+        gr.appendChild(gth);
+        tb.appendChild(gr);
+        g[1].forEach(function(e){
+          const tr = el('tr');
+          const td1 = el('td'); td1.appendChild(valOrNL(e.day));
+          const td2 = el('td', 't'); td2.appendChild(valOrNL(e.time));
+          const td3 = el('td'); td3.appendChild(valOrNL(e.location));
+          if (e.note) td3.appendChild(el('span', 'note', e.note));
+          if (e.flag) { td3.appendChild(document.createElement('br')); td3.appendChild(flagNode(e.flag)); }
+          tr.appendChild(td1); tr.appendChild(td2); tr.appendChild(td3);
+          tb.appendChild(tr);
+        });
+        table.appendChild(tb);
+      });
+      sec.appendChild(table);
+    }
+    body.appendChild(sec);
+  }
+
+  /* Confession and Adoration */
+  if (data.confession.length || data.adoration.length) {
+    const sec = el('section');
+    sec.appendChild(el('h3', null, 'Confession and Adoration'));
+    if (data.confession.length) { sec.appendChild(el('h4', null, 'Confession')); sec.appendChild(renderEntryList(data.confession)); }
+    if (data.adoration.length) { sec.appendChild(el('h4', null, 'Adoration')); sec.appendChild(renderEntryList(data.adoration)); }
+    body.appendChild(sec);
+  }
+
+  /* Events */
+  if (data.events.length) {
+    const sec = el('section');
+    sec.appendChild(el('h3', null, 'Events'));
+    const ul = el('ul', 'items');
+    sortEvents(data.events).forEach(function(ev){
+      const li = el('li');
+      li.appendChild(el('div', 'item-title', ev.title));
+      const meta = el('div', 'item-meta');
+      const d = el('span'); d.appendChild(valOrNL(fmtDate(ev.date)));
+      const t = el('span');
+      t.appendChild(valOrNL(ev.start ? fmtTime(ev.start) + (ev.end ? ' to ' + fmtTime(ev.end) : '') : null));
+      const l = el('span'); l.appendChild(valOrNL(ev.location));
+      meta.appendChild(d); meta.appendChild(t); meta.appendChild(l);
+      li.appendChild(meta);
+      if (ev.flag) li.appendChild(flagNode(ev.flag));
+      if (canExport(ev)) {
+        const btn = el('button', 'cal-btn', 'Add to calendar');
+        btn.type = 'button';
+        btn.addEventListener('click', function(){ downloadIcs(ev); });
+        li.appendChild(btn);
+      }
+      ul.appendChild(li);
+    });
+    sec.appendChild(ul);
+    body.appendChild(sec);
+  }
+
+  /* Asks */
+  if (data.asks.length) {
+    const sec = el('section');
+    sec.appendChild(el('h3', null, 'Asks'));
+    const ul = el('ul', 'items');
+    sortAsks(data.asks).forEach(function(a){
+      const li = el('li');
+      li.appendChild(el('div', 'item-title', a.what));
+      const meta = el('div', 'item-meta');
+      const w = el('span'); w.appendChild(document.createTextNode('Who: ')); w.appendChild(valOrNL(a.who));
+      const dl = el('span'); dl.appendChild(document.createTextNode('By: ')); dl.appendChild(valOrNL(validDate(a.deadline) ? fmtDate(a.deadline) : a.deadline));
+      const c = el('span'); c.appendChild(document.createTextNode('Contact: ')); c.appendChild(valOrNL(a.contact));
+      meta.appendChild(w); meta.appendChild(dl); meta.appendChild(c);
+      li.appendChild(meta);
+      if (a.flag) li.appendChild(flagNode(a.flag));
+      ul.appendChild(li);
+    });
+    sec.appendChild(ul);
+    body.appendChild(sec);
+  }
+
+  /* Notes */
+  if (data.notes.length) {
+    const sec = el('section');
+    sec.appendChild(el('h3', null, 'Notes'));
+    const ul = el('ul', 'items');
+    data.notes.forEach(function(n){
+      const li = el('li', null, n.text);
+      if (n.flag) { li.appendChild(document.createElement('br')); li.appendChild(flagNode(n.flag)); }
+      ul.appendChild(li);
+    });
+    sec.appendChild(ul);
+    body.appendChild(sec);
+  }
+
+  if (!body.firstChild) body.appendChild(el('p', 'na', 'Nothing could be extracted from this bulletin.'));
+  root.appendChild(body);
+  $('toolbar').hidden = false;
+}
+
+/* ---------- Calendar ---------- */
+function icsEscape(t){
+  return String(t).replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\r?\n/g, '\\n');
+}
+function icsFold(line){
+  if (line.length <= 75) return line;
+  let out = line.slice(0, 75);
+  let rest = line.slice(75);
+  while (rest.length) { out += '\r\n ' + rest.slice(0, 74); rest = rest.slice(74); }
+  return out;
+}
+function slugify(t){
+  return t.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 40) || 'event';
+}
+function wallStamp(date, time, addMin){
+  const d = date.split('-').map(Number);
+  const t = time.split(':').map(Number);
+  const dt = new Date(Date.UTC(d[0], d[1] - 1, d[2], t[0], t[1] + (addMin || 0)));
+  return dt.getUTCFullYear() + pad2(dt.getUTCMonth() + 1) + pad2(dt.getUTCDate()) + 'T' +
+    pad2(dt.getUTCHours()) + pad2(dt.getUTCMinutes()) + '00';
+}
+function utcStamp(){
+  const n = new Date();
+  return n.getUTCFullYear() + pad2(n.getUTCMonth() + 1) + pad2(n.getUTCDate()) + 'T' +
+    pad2(n.getUTCHours()) + pad2(n.getUTCMinutes()) + pad2(n.getUTCSeconds()) + 'Z';
+}
+function buildIcs(ev){
+  const dtStart = wallStamp(ev.date, ev.start, 0);
+  const dtEnd = (ev.end && ev.end > ev.start) ? wallStamp(ev.date, ev.end, 0) : wallStamp(ev.date, ev.start, 60);
+  const lines = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//AppADay//144 Bulletin Brief//EN',
+    'CALSCALE:GREGORIAN',
+    'METHOD:PUBLISH',
+    'BEGIN:VTIMEZONE',
+    'TZID:America/Chicago',
+    'X-LIC-LOCATION:America/Chicago',
+    'BEGIN:DAYLIGHT',
+    'TZOFFSETFROM:-0600',
+    'TZOFFSETTO:-0500',
+    'TZNAME:CDT',
+    'DTSTART:19700308T020000',
+    'RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=2SU',
+    'END:DAYLIGHT',
+    'BEGIN:STANDARD',
+    'TZOFFSETFROM:-0500',
+    'TZOFFSETTO:-0600',
+    'TZNAME:CST',
+    'DTSTART:19701101T020000',
+    'RRULE:FREQ=YEARLY;BYMONTH=11;BYDAY=1SU',
+    'END:STANDARD',
+    'END:VTIMEZONE',
+    'BEGIN:VEVENT',
+    'UID:' + ev.date.replace(/-/g, '') + '-' + slugify(ev.title) + '@appaday-144',
+    'DTSTAMP:' + utcStamp(),
+    'DTSTART;TZID=America/Chicago:' + dtStart,
+    'DTEND;TZID=America/Chicago:' + dtEnd,
+    'SUMMARY:' + icsEscape(ev.title)
+  ];
+  if (ev.location) lines.push('LOCATION:' + icsEscape(ev.location));
+  if (currentData && currentData.parish) lines.push('DESCRIPTION:' + icsEscape('From the ' + currentData.parish + ' bulletin'));
+  lines.push('END:VEVENT', 'END:VCALENDAR');
+  return lines.map(icsFold).join('\r\n') + '\r\n';
+}
+function downloadIcs(ev){
+  const blob = new Blob([buildIcs(ev)], { type: 'text/calendar;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = ev.date + '-' + slugify(ev.title) + '.ics';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(function(){ URL.revokeObjectURL(url); }, 1500);
+  toast('Calendar file downloaded');
+}
+
+/* ---------- Share and print ---------- */
+function digestText(data){
+  const out = [];
+  out.push((data.parish || 'Parish bulletin') + (data.weekOf ? ' | Week of ' + fmtDate(data.weekOf, true) : ''));
+  const mt = data.massTimes;
+  const fl = function(x){ return x.flag ? ' [check: ' + x.flag + ']' : ''; };
+  if (mt.changes.length) {
+    out.push('', "THIS WEEK'S CHANGES");
+    mt.changes.forEach(function(c){ out.push('* ' + entryText(c) + fl(c)); });
+  }
+  [['WEEKEND MASSES', mt.weekend], ['WEEKDAY MASSES', mt.weekday], ['SPECIAL', mt.special],
+   ['CONFESSION', data.confession], ['ADORATION', data.adoration]].forEach(function(g){
+    if (!g[1].length) return;
+    out.push('', g[0]);
+    g[1].forEach(function(e){ out.push('* ' + entryText(e) + fl(e)); });
+  });
+  if (data.events.length) {
+    out.push('', 'EVENTS');
+    sortEvents(data.events).forEach(function(ev){
+      const bits = [ev.title, fmtDate(ev.date), ev.start ? fmtTime(ev.start) : null, ev.location].filter(Boolean);
+      out.push('* ' + bits.join(', ') + fl(ev));
+    });
+  }
+  if (data.asks.length) {
+    out.push('', 'ASKS');
+    sortAsks(data.asks).forEach(function(a){
+      const bits = [a.what, a.who ? 'who: ' + a.who : null, a.deadline ? 'by ' + (validDate(a.deadline) ? fmtDate(a.deadline) : a.deadline) : null, a.contact ? 'contact: ' + a.contact : null].filter(Boolean);
+      out.push('* ' + bits.join(', ') + fl(a));
+    });
+  }
+  if (data.notes.length) {
+    out.push('', 'NOTES');
+    data.notes.forEach(function(n){ out.push('* ' + n.text + fl(n)); });
+  }
+  return out.join('\n');
+}
+function copyText(text){
+  if (navigator.clipboard && navigator.clipboard.writeText) return navigator.clipboard.writeText(text);
+  return new Promise(function(resolve, reject){
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.setAttribute('readonly', '');
+    ta.style.position = 'absolute';
+    ta.style.left = '-9999px';
+    document.body.appendChild(ta);
+    ta.select();
+    let ok = false;
+    try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+    document.body.removeChild(ta);
+    if (ok) resolve(); else reject(new Error('copy failed'));
+  });
+}
+function shareDigest(){
+  if (!currentData) return;
+  const text = digestText(currentData);
+  const title = (currentData.parish || 'Bulletin') + ' brief';
+  if (navigator.share) {
+    navigator.share({ title: title, text: text }).catch(function(err){
+      if (err && err.name === 'AbortError') return;
+      copyText(text).then(function(){ toast('Digest copied to clipboard'); }, function(){ toast('Could not share or copy'); });
+    });
+    return;
+  }
+  copyText(text).then(function(){ toast('Digest copied to clipboard'); }, function(){ toast('Could not copy the digest'); });
+}
+
+/* ---------- History ---------- */
+function loadHistory(){
+  try {
+    const raw = lsGet(LS_HISTORY);
+    const list = raw ? JSON.parse(raw) : [];
+    return Array.isArray(list) ? list.filter(function(h){ return h && h.data && h.weekOf; }) : [];
+  } catch (e) { return []; }
+}
+function saveHistory(list){ lsSet(LS_HISTORY, JSON.stringify(list)); }
+function addToHistory(data){
+  const key = data.weekOf || 'undated';
+  let list = loadHistory().filter(function(h){ return h.weekOf !== key; });
+  list.push({ weekOf: key, parish: data.parish, savedAt: Date.now(), data: data });
+  list.sort(function(a, b){ return a.savedAt - b.savedAt; });
+  while (list.length > HISTORY_CAP) list.shift();
+  saveHistory(list);
+}
+function renderHistory(){
+  const ul = $('historyList');
+  clearNode(ul);
+  const list = loadHistory().sort(function(a, b){ return a.weekOf < b.weekOf ? 1 : a.weekOf > b.weekOf ? -1 : 0; });
+  if (!list.length) {
+    ul.appendChild(el('li', 'drawer-empty', 'No saved weeks yet. Each brief you generate is kept here, up to twelve.'));
+    return;
+  }
+  list.forEach(function(h){
+    const li = el('li');
+    const open = el('button', 'hist-open');
+    open.type = 'button';
+    open.appendChild(el('span', 'p', h.parish || 'Parish not listed'));
+    open.appendChild(el('span', 'd', validDate(h.weekOf) ? 'Week of ' + fmtDate(h.weekOf, true) : 'Undated'));
+    open.addEventListener('click', function(){
+      try {
+        currentData = normalize(h.data, h.weekOf);
+        renderDigest(currentData);
+        closeDrawer();
+      } catch (e) { toast('That entry could not be opened'); }
+    });
+    const del = el('button', 'hist-del', 'Delete');
+    del.type = 'button';
+    let armTimer = null;
+    del.addEventListener('click', function(){
+      if (!del.classList.contains('armed')) {
+        del.classList.add('armed');
+        del.textContent = 'Confirm';
+        armTimer = setTimeout(function(){ del.classList.remove('armed'); del.textContent = 'Delete'; }, 3000);
+        return;
+      }
+      clearTimeout(armTimer);
+      saveHistory(loadHistory().filter(function(x){ return x.weekOf !== h.weekOf; }));
+      renderHistory();
+      toast('Week removed');
+    });
+    li.appendChild(open);
+    li.appendChild(del);
+    ul.appendChild(li);
+  });
+}
+
+/* ---------- Overlays ---------- */
+function openSettings(note){
+  $('apiKey').value = lsGet(LS_KEY) || '';
+  $('sessionName').value = lsGet(LS_SESSION) || '';
+  setMsg('settingsMsg', note || '', note ? 'err' : '');
+  $('overlay').classList.add('show');
+  $('settingsModal').classList.add('show');
+  setTimeout(function(){ $('apiKey').focus(); }, 50);
+}
+function closeSettings(){
+  $('settingsModal').classList.remove('show');
+  if (!$('drawer').classList.contains('show')) $('overlay').classList.remove('show');
+}
+function openDrawer(){
+  renderHistory();
+  $('overlay').classList.add('show');
+  $('drawer').classList.add('show');
+}
+function closeDrawer(){
+  $('drawer').classList.remove('show');
+  if (!$('settingsModal').classList.contains('show')) $('overlay').classList.remove('show');
+}
+function renderSessionChip(){
+  const s = lsGet(LS_SESSION);
+  $('sessionChip').textContent = s ? s : '';
+}
+
+/* ---------- PDF input ---------- */
+let pdfData = null;
+function clearPdf(){
+  pdfData = null;
+  $('pdfInput').value = '';
+  $('fileChip').classList.remove('show');
+  $('fileName').textContent = '';
+}
+function onPdfChosen(){
+  const f = $('pdfInput').files && $('pdfInput').files[0];
+  setMsg('inputMsg', '');
+  if (!f) { clearPdf(); return; }
+  const isPdf = f.type === 'application/pdf' || /\.pdf$/i.test(f.name);
+  if (!isPdf) { clearPdf(); setMsg('inputMsg', 'Please choose a PDF file.', 'err'); return; }
+  if (f.size > MAX_PDF_BYTES) {
+    clearPdf();
+    setMsg('inputMsg', 'That PDF is ' + (f.size / 1048576).toFixed(1) + ' MB. Please use one under 20 MB, or paste the text instead.', 'err');
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = function(){
+    const res = String(reader.result || '');
+    const b64 = res.slice(res.indexOf(',') + 1);
+    if (!b64) { clearPdf(); setMsg('inputMsg', 'Could not read that PDF.', 'err'); return; }
+    pdfData = { name: f.name, base64: b64 };
+    $('fileName').textContent = f.name;
+    $('fileChip').classList.add('show');
+  };
+  reader.onerror = function(){ clearPdf(); setMsg('inputMsg', 'Could not read that PDF.', 'err'); };
+  reader.readAsDataURL(f);
+}
+
+/* ---------- Generate ---------- */
+let currentData = null;
+let busy = false;
+function setBusy(on){
+  busy = on;
+  const b = $('generateBtn');
+  b.disabled = on;
+  b.classList.toggle('loading', on);
+  $('genLabel').textContent = on ? 'Reading bulletin...' : 'Generate brief';
+}
+async function generate(){
+  if (busy) return;
+  const key = lsGet(LS_KEY);
+  if (!key) { openSettings('Add your Anthropic API key to generate a brief.'); return; }
+  const pasted = $('pasteText').value.trim();
+  if (!pasted && !pdfData) { setMsg('inputMsg', 'Paste bulletin text or choose a PDF first.', 'err'); return; }
+  let weekOf = $('weekOf').value;
+  if (!validDate(weekOf)) { weekOf = comingSunday(); $('weekOf').value = weekOf; }
+
+  const content = [];
+  if (pdfData) {
+    content.push({ type: 'document', source: { type: 'base64', media_type: 'application/pdf', data: pdfData.base64 } });
+  }
+  let text = 'Week of (Sunday): ' + weekOf + '\n\n';
+  if (pasted) text += (pdfData ? 'Additional pasted bulletin text:\n' : 'Pasted bulletin text:\n') + pasted;
+  else text += 'The bulletin is the attached PDF.';
+  text += '\n\nReturn the JSON object now.';
+  content.push({ type: 'text', text: text });
+
+  setBusy(true);
+  setMsg('inputMsg', pdfData ? 'Reading the PDF. Larger bulletins can take a minute.' : 'Extracting the brief...', 'info');
+  try {
+    const res = await fetch(API_URL, {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+        'x-api-key': key,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: CLAUDE_MODEL,
+        max_tokens: MAX_TOKENS,
+        thinking: { type: 'disabled' },
+        system: SYSTEM_PROMPT,
+        messages: [{ role: 'user', content: content }]
+      })
+    });
+    let json = null;
+    try { json = await res.json(); } catch (e) { json = null; }
+    if (!res.ok) {
+      const m = json && json.error && json.error.message ? json.error.message : ('HTTP ' + res.status);
+      if (res.status === 401) openSettings('That API key was rejected. Please check it.');
+      setMsg('inputMsg', 'The request failed: ' + m, 'err');
+      return;
+    }
+    const blocks = json && Array.isArray(json.content) ? json.content : [];
+    const joined = blocks.filter(function(b){ return b && b.type === 'text'; }).map(function(b){ return b.text; }).join('');
+    if (!joined.trim()) {
+      console.warn('Empty reply. Block types:', blocks.map(function(b){ return b && b.type; }), 'stop_reason:', json && json.stop_reason);
+      setMsg('inputMsg', 'Claude returned an empty reply. Please try again.', 'err');
+      return;
+    }
+    const first = joined.indexOf('{');
+    const last = joined.lastIndexOf('}');
+    let parsed = null;
+    if (first !== -1 && last > first) {
+      try { parsed = JSON.parse(joined.slice(first, last + 1)); } catch (e) { parsed = null; }
+    }
+    if (!parsed) {
+      console.warn('Unparseable reply. stop_reason:', json && json.stop_reason);
+      setMsg('inputMsg', 'The reply could not be read as a digest. Please try again' + (json && json.stop_reason === 'max_tokens' ? ', or paste a shorter excerpt.' : '.'), 'err');
+      return;
+    }
+    let data;
+    try { data = normalize(parsed, weekOf); }
+    catch (e) { setMsg('inputMsg', 'The reply was not in the expected shape. Please try again.', 'err'); return; }
+    currentData = data;
+    renderDigest(data);
+    addToHistory(data);
+    setMsg('inputMsg', 'Brief ready.', 'info');
+    if (window.matchMedia && window.matchMedia('(max-width: 899px)').matches) {
+      $('digest').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  } catch (err) {
+    setMsg('inputMsg', 'Network error. Check your connection and try again.', 'err');
+  } finally {
+    setBusy(false);
+  }
+}
+
+/* ---------- Wire up ---------- */
+document.addEventListener('DOMContentLoaded', function(){
+  $('weekOf').value = comingSunday();
+  renderSessionChip();
+  $('pdfInput').addEventListener('change', onPdfChosen);
+  $('fileClear').addEventListener('click', function(){ clearPdf(); setMsg('inputMsg', ''); });
+  $('generateBtn').addEventListener('click', generate);
+  $('settingsBtn').addEventListener('click', function(){ openSettings(); });
+  $('settingsCancel').addEventListener('click', closeSettings);
+  $('settingsSave').addEventListener('click', function(){
+    const k = $('apiKey').value.trim();
+    const s = $('sessionName').value.trim();
+    const ok1 = k ? lsSet(LS_KEY, k) : (function(){ try { localStorage.removeItem(LS_KEY); return true; } catch (e) { return false; } })();
+    const ok2 = lsSet(LS_SESSION, s);
+    if (!ok1 || !ok2) { setMsg('settingsMsg', 'This browser blocked saving. Settings will not persist.', 'err'); return; }
+    renderSessionChip();
+    closeSettings();
+    toast('Settings saved');
+  });
+  $('historyBtn').addEventListener('click', openDrawer);
+  $('drawerClose').addEventListener('click', closeDrawer);
+  $('overlay').addEventListener('click', function(){ closeSettings(); closeDrawer(); });
+  $('shareBtn').addEventListener('click', shareDigest);
+  $('printBtn').addEventListener('click', function(){ window.print(); });
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape') { closeSettings(); closeDrawer(); }
+  });
+});
+</script>
+</body>
+</html>
