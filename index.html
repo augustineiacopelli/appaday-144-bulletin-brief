@@ -346,7 +346,7 @@ footer.app-footer a{color:var(--navy);font-weight:600}
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
-const CLAUDE_MODEL = 'claude-sonnet-5';
+const CLAUDE_MODEL = await getModel();
 const API_URL = 'https://api.anthropic.com/v1/messages';
 const LS_KEY = 'appaday-144-apikey';
 const LS_SESSION = 'appaday-144-session';
@@ -1092,6 +1092,17 @@ document.addEventListener('DOMContentLoaded', function(){
     if (e.key === 'Escape') { closeSettings(); closeDrawer(); }
   });
 });
+
+async function getModel(tier = 'sonnet') {
+  try {
+    const response = await fetch('../config.json');
+    const config = await response.json();
+    return config.models[tier];
+  } catch {
+    return 'claude-sonnet-5-5';
+  }
+}
 </script>
 </body>
 </html>
+
