@@ -10,6 +10,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <link rel="manifest" href="https://augustineiacopelli.github.io/appaday/manifests/144.webmanifest">
 <script src="https://augustineiacopelli.github.io/appaday/save.js" defer></script>
+<script src="https://augustineiacopelli.github.io/appaday/models.js"></script>
+<script src="https://augustineiacopelli.github.io/appaday/keys.js" data-app="144" data-legacy-key="appaday-144-apikey" data-accent="#6A4C93" defer></script>
 <title>Bulletin Brief | AppADay 144</title>
 <meta name="description" content="Turn a Catholic parish bulletin into a one page digest of Mass times, schedule changes, events, and asks.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -330,9 +332,7 @@ footer.app-footer a{color:var(--navy);font-weight:600}
 
 <div class="modal" id="settingsModal" role="dialog" aria-modal="true" aria-labelledby="setTitle">
   <h2 id="setTitle">Settings</h2>
-  <label class="field" for="apiKey">Anthropic API key</label>
-  <input type="password" id="apiKey" autocomplete="off" spellcheck="false" placeholder="sk-ant-...">
-  <p class="hint">Stored only in this browser's localStorage and sent only to api.anthropic.com.</p>
+  <div id="keyMount"><p class="hint">The key manager is loading. If this stays, check your connection and reload.</p></div>
   <label class="field" for="sessionName">Session name</label>
   <input type="text" id="sessionName" maxlength="60" placeholder="e.g. St. Francis bulletin">
   <div class="msg" id="settingsMsg"></div>
@@ -353,9 +353,8 @@ footer.app-footer a{color:var(--navy);font-weight:600}
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
-const CLAUDE_MODEL = await getModel();
+let CLAUDE_MODEL = (window.AppModels ? window.AppModels.id('sonnet') : '');
 const API_URL = 'https://api.anthropic.com/v1/messages';
-const LS_KEY = 'appaday-144-apikey';
 const LS_SESSION = 'appaday-144-session';
 const LS_HISTORY = 'appaday-144-history';
 const HISTORY_CAP = 12;
@@ -923,12 +922,11 @@ function renderHistory(){
 
 /* ---------- Overlays ---------- */
 function openSettings(note){
-  $('apiKey').value = lsGet(LS_KEY) || '';
+  if (window.AppKeys) window.AppKeys.mountSettings($('keyMount'));
   $('sessionName').value = lsGet(LS_SESSION) || '';
   setMsg('settingsMsg', note || '', note ? 'err' : '');
   $('overlay').classList.add('show');
   $('settingsModal').classList.add('show');
-  setTimeout(function(){ $('apiKey').focus(); }, 50);
 }
 function closeSettings(){
   $('settingsModal').classList.remove('show');
@@ -992,8 +990,9 @@ function setBusy(on){
 }
 async function generate(){
   if (busy) return;
-  const key = lsGet(LS_KEY);
-  if (!key) { openSettings('Add your Anthropic API key to generate a brief.'); return; }
+  if (!window.AppKeys) { setMsg('inputMsg', 'The key manager did not load. Check your connection and reload.', 'err'); return; }
+  const key = await window.AppKeys.get();
+  if (!key) { setMsg('inputMsg', 'Add your Claude API key with the Settings button to generate a brief.', 'err'); return; }
   const pasted = $('pasteText').value.trim();
   if (!pasted && !pdfData) { setMsg('inputMsg', 'Paste bulletin text or choose a PDF first.', 'err'); return; }
   let weekOf = $('weekOf').value;
@@ -1081,11 +1080,9 @@ document.addEventListener('DOMContentLoaded', function(){
   $('settingsBtn').addEventListener('click', function(){ openSettings(); });
   $('settingsCancel').addEventListener('click', closeSettings);
   $('settingsSave').addEventListener('click', function(){
-    const k = $('apiKey').value.trim();
     const s = $('sessionName').value.trim();
-    const ok1 = k ? lsSet(LS_KEY, k) : (function(){ try { localStorage.removeItem(LS_KEY); return true; } catch (e) { return false; } })();
     const ok2 = lsSet(LS_SESSION, s);
-    if (!ok1 || !ok2) { setMsg('settingsMsg', 'This browser blocked saving. Settings will not persist.', 'err'); return; }
+    if (!ok2) { setMsg('settingsMsg', 'This browser blocked saving. Settings will not persist.', 'err'); return; }
     renderSessionChip();
     closeSettings();
     toast('Settings saved');
@@ -1100,15 +1097,6 @@ document.addEventListener('DOMContentLoaded', function(){
   });
 });
 
-async function getModel(tier = 'sonnet') {
-  try {
-    const response = await fetch('../config.json');
-    const config = await response.json();
-    return config.models[tier];
-  } catch {
-    return 'claude-sonnet-5-5';
-  }
-}
 </script>
 </body>
 </html>
