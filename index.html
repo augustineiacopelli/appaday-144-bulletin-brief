@@ -1022,7 +1022,7 @@ async function generate(){
       body: JSON.stringify({
         model: CLAUDE_MODEL,
         max_tokens: MAX_TOKENS,
-        thinking: { type: 'disabled' },
+        thinking: (window.AppModels && window.AppModels.thinking ? window.AppModels.thinking(CLAUDE_MODEL) : undefined),
         system: SYSTEM_PROMPT,
         messages: [{ role: 'user', content: content }]
       })
